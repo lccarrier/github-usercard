@@ -1,12 +1,22 @@
 /* Step 1: using axios, send a GET request to the following URL 
-           (replacing the palceholder with your Github name):
-           https://api.github.com/users/<your name>
+           (replacing the placeholder with your Github name):
+           https://api.github.com/users/BarbosaRicardo
 */
+axios.get('https://api.github.com/users/lccarrier')
+  .then (data => {
+    console.log('data: ', data)
+    const myInfo = data.data;
+    console.log('UserInfo: ', myInfo)
+    
+    //step 4
+    const cards = document.querySelector('.cards')
+    const cardInfo = cardCreator(myInfo)
+    cards.appendChild(cardInfo)
+  })
 
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
-
    Skip to Step 3.
 */
 
@@ -24,14 +34,30 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [
+  'SGonzalez44',
+  'juarezfrench ',
+  'Brandon-Pampuch',
+  'Jonathan-YungHsin-Ho',
+  'DanielWallen87 ',
+  'brandonharris177'
+];
+
+followersArray.forEach(user => {
+  axios.get(`https://api.github.com/users/${user}`)
+    .then (data => {
+      const card = cardCreator(data.data)
+      const cards = document.querySelector('.cards')
+      cards.appendChild(card)
+    }) 
+    
+})
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
-
-<div class="card">
-  <img src={image url of user} />
-  <div class="card-info">
+<div class="card"> -yes
+  <img src={image url of user} /> -yes
+  <div class="card-info"> -yes
     <h3 class="name">{users name}</h3>
     <p class="username">{users user name}</p>
     <p>Location: {users location}</p>
@@ -43,13 +69,53 @@ const followersArray = [];
     <p>Bio: {users bio}</p>
   </div>
 </div>
-
 */
 
-/* List of LS Instructors Github username's: 
-  tetondan
-  dustinmyers
-  justsml
-  luishrd
-  bigknell
-*/
+  const cards = document.querySelector('.cards');
+  console.log(cards);
+
+  function cardCreator(arg) {
+    // Create class elements 
+    const card = document.createElement('div');
+    const img = document.createElement('img');
+    const cardInfo = document.createElement('div');
+    const name = document.createElement('h3');
+    const userName = document.createElement('p');
+    const location = document.createElement('p');
+    const profile = document.createElement('p');
+    const profileLink = document.createElement('a');
+    const followers = document.createElement('p');
+    const following = document.createElement('p');
+    const bio = document.createElement('p');
+
+    // Create class lists 
+    card.classList.add('card')
+    cardInfo.classList.add('card-info')
+    name.classList.add('name')
+    userName.classList.add('username')
+    
+    // Append children 
+    card.appendChild(img)
+    card.appendChild(cardInfo)
+    cardInfo.appendChild(name)
+    cardInfo.appendChild(userName)
+    cardInfo.appendChild(location)
+    cardInfo.appendChild(profile)
+    cardInfo.appendChild(profileLink)
+    cardInfo.appendChild(followers)
+    cardInfo.appendChild(following)
+    cardInfo.appendChild(bio)
+
+    // Textcontent 
+    img.src = arg.avatar_url
+    location.textContent = arg.location 
+    name.textContent = arg.name
+    userName.textContent = arg.login 
+    const theProfileLink = arg.url
+    profileLink.innerHTML = theProfileLink.link(arg.url)
+    followers.textContent = `Followers: ${arg.followers}`
+    following.textContent = `Following: ${arg.following}`
+    bio.textContent = arg.bio 
+
+    return card
+  }
